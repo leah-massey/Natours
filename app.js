@@ -6,7 +6,7 @@ app.use(express.json());
 // express.json is middleware
 
 // .get is the http method here.
-// a callback function is the secodn argument
+// a callback function is the second argument
 // app.get("/", (req, res) => {
 //   res
 //     .status(200)
@@ -21,16 +21,39 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
+//. get all tours
 app.get("/api/v1/tours", (req, res) => {
   res
     .status(200)
-    .json({ status: "Sucess", results: tours.length, data: { tours } });
+    .json({ status: "Success", results: tours.length, data: { tours } });
+});
+
+//. get one tour
+app.get("/api/v1/tours/:id", (req, res) => {
+  const id = req.params.id * 1;
+  const tour = tours.find((el) => el.id === id);
+
+  res.status(200).json({ status: "Success", data: { tour } });
 });
 
 app.post("/api/v1/tours", (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
-  const newTour = Object.assign({ id: newId, req.body});
-  res.send("done"); //we alwyas need to send back something
+  const newTour = Object.assign({ id: newId }, req.body); // Object.assign merges the two objects.
+
+  tours.push(newTour);
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(201).json({
+        // 201 means 'created'
+        status: "success",
+        data: {
+          tour: newTour,
+        },
+      });
+    }
+  );
 });
 
 const port = 3001;
