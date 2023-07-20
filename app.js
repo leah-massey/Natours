@@ -2,34 +2,19 @@ const fs = require("fs");
 const express = require("express");
 
 const app = express();
-app.use(express.json());
-// express.json is middleware
-
-// .get is the http method here.
-// a callback function is the second argument
-// app.get("/", (req, res) => {
-//   res
-//     .status(200)
-//     .json({ message: "hello from the server side", app: "Natours" });
-// });
-
-// app.post("/", (req, res) => {
-//   res.send("You can post to this end point.");
-// });
+app.use(express.json()); // express.json is middleware
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-//. get all tours
-app.get("/api/v1/tours", (req, res) => {
+const getAllTours = (req, res) => {
   res
     .status(200)
     .json({ status: "Success", results: tours.length, data: { tours } });
-});
+};
 
-//. get one tour
-app.get("/api/v1/tours/:id", (req, res) => {
+const getTour = (req, res) => {
   const id = req.params.id * 1;
 
   if (id > tours.length) {
@@ -39,9 +24,9 @@ app.get("/api/v1/tours/:id", (req, res) => {
   const tour = tours.find((el) => el.id === id);
 
   res.status(200).json({ status: "Success", data: { tour } });
-});
+};
 
-app.post("/api/v1/tours", (req, res) => {
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body); // Object.assign merges the two objects.
 
@@ -59,10 +44,9 @@ app.post("/api/v1/tours", (req, res) => {
       });
     }
   );
-});
+};
 
-// update a tour
-app.patch("/api/v1/tours/:id", (req, res) => {
+const updateTour = (req, res) => {
   if (req.params.length * 1 > tours.length) {
     return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
   }
@@ -72,18 +56,25 @@ app.patch("/api/v1/tours/:id", (req, res) => {
       tour: "<this is updated tour>",
     },
   });
-});
+};
 
-// delete a tour
-app.delete("/api/v1/tours/:id", (req, res) => {
-  // if (req.params.length * 1 > tours.length) {
-  //   return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
-  // }
+const deleteTour = (req, res) => {
+  if (req.params.length * 1 > tours.length) {
+    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
+  }
   res.status(204).json({
     status: "success",
     data: null,
   });
-});
+};
+
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+
+app
+  .route("/api/v1/tours/:id")
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 const port = 3001;
 app.listen(port, () => {
