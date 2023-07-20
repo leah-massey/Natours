@@ -61,6 +61,19 @@ app.post("/api/v1/tours", (req, res) => {
   );
 });
 
+// update a tour
+app.patch("/api/v1/tours/:id", (req, res) => {
+  if (req.params.length * 1 > tours.length) {
+    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
+  }
+  res.status(200).json({
+    status: "success",
+    data: {
+      tour: "<this is updated tour>",
+    },
+  });
+});
+
 const port = 3001;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
