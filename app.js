@@ -31,6 +31,11 @@ app.get("/api/v1/tours", (req, res) => {
 //. get one tour
 app.get("/api/v1/tours/:id", (req, res) => {
   const id = req.params.id * 1;
+
+  if (id > tours.length) {
+    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
+  }
+
   const tour = tours.find((el) => el.id === id);
 
   res.status(200).json({ status: "Success", data: { tour } });
