@@ -2,16 +2,30 @@ const fs = require("fs");
 const express = require("express");
 
 const app = express();
-app.use(express.json()); // express.json is middleware
+app.use(express.json()); // express.json is middleware.
+
+//make own middleware:
+app.use((req, res, next) => {
+  console.log("hello from the middleware 👋🏻");
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 const getAllTours = (req, res) => {
-  res
-    .status(200)
-    .json({ status: "Success", results: tours.length, data: { tours } });
+  res.status(200).json({
+    status: "Success",
+    requestedAt: req.requestTime,
+    results: tours.length,
+    data: { tours },
+  });
 };
 
 const getTour = (req, res) => {
