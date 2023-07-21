@@ -1,10 +1,6 @@
 const express = require("express");
 const tourController = require("../controllers/tourController"); // tourController will be the equivalent to exports in the tourController file.
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
-
 const router = express.Router();
 
 router

@@ -2,6 +2,10 @@ const fs = require("fs");
 
 // we change all functions from 'const' to 'exports.' (we put them all on the exports object so that we can export them all at once.)
 
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+);
+
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: "Success",
