@@ -8,7 +8,7 @@ router.param("id", tourController.checkID);
 router
   .route("/")
   .get(tourController.getAllTours)
-  .post(tourController.createTour);
+  .post(tourController.checkBody, tourController.createTour); //middleware checkBody is only running on createTour
 
 router
   .route("/:id")
