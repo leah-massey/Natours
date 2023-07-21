@@ -6,6 +6,14 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkID = (req, res, next, val) => {
+  console.log(`this is tour id: ${val}`);
+  if (req.params.length * 1 > tours.length) {
+    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: "Success",
@@ -17,10 +25,6 @@ exports.getAllTours = (req, res) => {
 
 exports.getTour = (req, res) => {
   const id = req.params.id * 1;
-
-  if (id > tours.length) {
-    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
-  }
 
   const tour = tours.find((el) => el.id === id);
 
@@ -48,9 +52,6 @@ exports.createTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  if (req.params.length * 1 > tours.length) {
-    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
-  }
   res.status(200).json({
     status: "success",
     data: {
@@ -60,9 +61,6 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  if (req.params.length * 1 > tours.length) {
-    return res.status(404).json({ status: "fail", message: "invalid id" }); // return is here as we want the program to terminate.
-  }
   res.status(204).json({
     status: "success",
     data: null,
